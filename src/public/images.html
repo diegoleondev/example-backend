@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test images</title>
+  <Style>
+    img {
+      width: 100px;
+      height: 100px;
+      border-radius: 16px;
+      margin: 1rem;
+    }
+
+    .picture {
+      width: 200px;
+      height: 200px;
+    }
+  </Style>
+</head>
+
+<body>
+  <div id="avatar"></div>
+  <h2>Pets</h2>
+  <div id="pets"></div>
+
+  <script>
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY5ODMwMDA2NiwiZXhwIjoxNzAwODkyMDY2fQ.XjmX4TAj43tgPoT9OZ1MJSenvcw5IQDa-BSoiHBehiI"
+
+    async function init() {
+      const fetchedUserAvatar = await fetch("http://localhost:7000/user/avatar", {
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        }
+      }).then(res => res.json()).catch(console.error)
+
+      const av = document.createElement("img")
+      av.src = fetchedUserAvatar.data.avatarUrl ?? "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg"
+
+      document.querySelector('#avatar').appendChild(av)
+
+      const fetchedPet = await fetch("http://localhost:7000/pet", {
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        }
+      }).then(res => res.json()).catch(console.error)
+
+      fetchedPet.data.forEach(p => {
+        const span = document.createElement("span")
+        const h3 = document.createElement("h3")
+        const picture1 = document.createElement("img")
+        const picture2 = document.createElement("img")
+        const picture3 = document.createElement("img")
+
+        h3.innerText = `Nombre: ${p.name}`
+        const defaultImage = "https://www.crossdogs.org/images/dog-placeholder.png"
+        picture1.src = p.picture1 ?? defaultImage;
+        picture2.src = p.picture2 ?? defaultImage;
+        picture3.src = p.picture3 ?? defaultImage;
+
+        picture1.classList.add("picture")
+        picture2.classList.add("picture")
+        picture3.classList.add("picture")
+
+        span.appendChild(h3)
+        span.appendChild(picture1)
+        span.appendChild(picture2)
+        span.appendChild(picture3)
+
+        document.getElementById("pets").appendChild(span)
+      })
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
